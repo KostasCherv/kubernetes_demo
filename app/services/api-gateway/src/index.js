@@ -4,6 +4,15 @@ const port = 3000
 
 const axios = require('axios')
 
+// Middleware
+app.use(express.json())
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'healthy' })
+})
+
+
 // Load service host addresses from environment variables, with defaults for local development
 const AUTH_SERVICE_HOST = process.env.AUTH_SERVICE_HOST || 'http://localhost:3001'
 const USER_SERVICE_HOST = process.env.USER_SERVICE_HOST || 'http://localhost:3002'
@@ -65,5 +74,5 @@ app.use('/products', async (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`API Gateway listening on port ${port}`)
 })

@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: k8s-microservices
+data:
+  AUTH_SERVICE_HOST: "http://auth-service:3000"
+  USER_SERVICE_HOST: "http://user-service:3000"
+  PRODUCT_SERVICE_HOST: "http://product-service:3000"
