@@ -40,7 +40,8 @@ app.get('/auth/validate', async (req, res) => {
 // User Service Proxy
 app.use('/users', async (req, res) => {
   try {
-    const serviceUrl = `${USER_SERVICE_HOST}${req.originalUrl.replace(/^\/users/, '')}`
+    // Preserve the full path including /users
+    const serviceUrl = `${USER_SERVICE_HOST}${req.originalUrl}`
     const method = req.method.toLowerCase()
     const response = await axios({
       method,
@@ -58,7 +59,8 @@ app.use('/users', async (req, res) => {
 // Product Service Proxy
 app.use('/products', async (req, res) => {
   try {
-    const serviceUrl = `${PRODUCT_SERVICE_HOST}${req.originalUrl.replace(/^\/products/, '')}`
+    // Preserve the full path including /products
+    const serviceUrl = `${PRODUCT_SERVICE_HOST}${req.originalUrl}`
     const method = req.method.toLowerCase()
     const response = await axios({
       method,
