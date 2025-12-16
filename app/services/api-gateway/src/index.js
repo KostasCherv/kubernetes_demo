@@ -1,0 +1,69 @@
+const express = require('express')
+const app = express()
+const port = 3000
+
+const axios = require('axios')
+
+// Load service host addresses from environment variables, with defaults for local development
+const AUTH_SERVICE_HOST = process.env.AUTH_SERVICE_HOST || 'http://localhost:3001'
+const USER_SERVICE_HOST = process.env.USER_SERVICE_HOST || 'http://localhost:3002'
+const PRODUCT_SERVICE_HOST = process.env.PRODUCT_SERVICE_HOST || 'http://localhost:3003'
+
+// Auth Service Proxy
+app.post('/auth/login', async (req, res) => {
+  try {
+    const response = await axios.post(`${AUTH_SERVICE_HOST}/login`, req.body)
+    res.status(response.status).json(response.data)
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message })
+  }
+})
+
+app.get('/auth/validate', async (req, res) => {
+  try {
+    const response = await axios.get(`${AUTH_SERVICE_HOST}/validate`, { headers: req.headers })
+    res.status(response.status).json(response.data)
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message })
+  }
+})
+
+// User Service Proxy
+app.use('/users', async (req, res) => {
+  try {
+    const serviceUrl = `${USER_SERVICE_HOST}${req.originalUrl.replace(/^\/users/, '')}`
+    const method = req.method.toLowerCase()
+    const response = await axios({
+      method,
+      url: serviceUrl,
+      data: req.body,
+      headers: req.headers,
+      params: req.query
+    })
+    res.status(response.status).json(response.data)
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message })
+  }
+})
+
+// Product Service Proxy
+app.use('/products', async (req, res) => {
+  try {
+    const serviceUrl = `${PRODUCT_SERVICE_HOST}${req.originalUrl.replace(/^\/products/, '')}`
+    const method = req.method.toLowerCase()
+    const response = await axios({
+      method,
+      url: serviceUrl,
+      data: req.body,
+      headers: req.headers,
+      params: req.query
+    })
+    res.status(response.status).json(response.data)
+  } catch (error) {
+    res.status(error.response?.status || 500).json({ error: error.message })
+  }
+})
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
