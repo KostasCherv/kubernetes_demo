@@ -1,0 +1,61 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: cleanup-cronjob
+  namespace: k8s-microservices
+spec:
+  schedule: "0 3 * * *"  # Daily at 3 AM (after backup)
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: cleanup
+            image: postgres:15-alpine
+            command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Starting cleanup tasks at $(date)"
+              
+              # Clean up old backup files (keep last 7 days)
+              echo "Cleaning old backup files..."
+              find /tmp -name "backup-*.sql.gz" -mtime +7 -delete 2>/dev/null || true
+              
+              # Database cleanup example (commented out - uncomment if needed)
+              echo "Running database cleanup..."
+              PGPASSWORD=$DATABASE_PASSWORD psql -h $DATABASE_HOST -U $DATABASE_USER -d $DATABASE_NAME <<EOF
+              -- Example: Clean up old records (uncomment if needed)
+              -- DELETE FROM sessions WHERE created_at < NOW() - INTERVAL '30 days';
+              SELECT 'Cleanup completed successfully' AS status;
+              EOF
+              
+              echo "Cleanup completed at $(date)"
+            env:
+            - name: DATABASE_HOST
+              value: postgres
+            - name: DATABASE_PORT
+              value: "5432"
+            - name: DATABASE_NAME
+              value: microservices_db
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_USER
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: POSTGRES_PASSWORD
+            resources:
+              requests:
+                memory: "64Mi"
+                cpu: "50m"
+              limits:
+                memory: "128Mi"
+                cpu: "100m"
+
