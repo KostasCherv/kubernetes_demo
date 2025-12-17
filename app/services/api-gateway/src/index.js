@@ -1,8 +1,17 @@
 const express = require('express')
+const cors = require('cors')
 const app = express()
 const port = 3000
 
 const axios = require('axios')
+
+// CORS middleware - allow all origins for demo (restrict in production)
+app.use(cors({
+  origin: true, // Allow all origins
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
 
 // Middleware
 app.use(express.json())
