@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: k8s-microservices
+data:
+  # Empty string means use same origin (works with Ingress)
+  # For local dev with different ports, set to http://localhost:3000
+  NEXT_PUBLIC_API_URL: "http://localhost:3000"
+

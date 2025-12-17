@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Frontend Service
 
-## Getting Started
+A Next.js management dashboard for the Kubernetes microservices demo.
 
-First, run the development server:
+## Features
 
+- **Authentication**: Login with JWT token
+- **Dashboard**: Overview of users and products
+- **Users Management**: View, create, edit, and delete users
+- **Products Management**: View, create, edit, and delete products
+
+## Local Development
+
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+
+### Setup
+
+1. Install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Set environment variable (optional, defaults to `http://localhost:3000`):
+```bash
+export NEXT_PUBLIC_API_URL=http://localhost:3000
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3001](http://localhost:3001) in your browser
 
-## Learn More
+### Default Login Credentials
 
-To learn more about Next.js, take a look at the following resources:
+- Username: `testuser`
+- Password: `testpass123`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## API Integration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The frontend connects to the API Gateway at the following endpoints:
 
-## Deploy on Vercel
+- `POST /auth/login` - User authentication
+- `GET /auth/validate` - Token validation
+- `GET /users` - List all users
+- `POST /users` - Create user
+- `PUT /users/:id` - Update user
+- `DELETE /users/:id` - Delete user
+- `GET /products` - List all products
+- `POST /products` - Create product
+- `PUT /products/:id` - Update product
+- `DELETE /products/:id` - Delete product
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Kubernetes Deployment
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Build Docker Image
+
+```bash
+cd app/services/frontend
+docker build -t frontend:latest .
+```
+
+### Deploy to Kubernetes
+
+```bash
+# Apply namespace (if not already created)
+kubectl apply -f ../../namespace.yaml
+
+# Apply ConfigMap
+kubectl apply -f k8s/configmap.yaml
+
+# Apply Deployment
+kubectl apply -f k8s/deployment.yaml
+
+# Apply Service
+kubectl apply -f k8s/service.yaml
+```
+
+### Check Status
+
+```bash
+# Check pods
+kubectl get pods -n k8s-microservices -l app.kubernetes.io/name=frontend
+
+# Check logs
+kubectl logs -n k8s-microservices -l app.kubernetes.io/name=frontend --tail=50
+
+# Port forward for local access
+kubectl port-forward -n k8s-microservices svc/frontend 3001:3000
+```
+
+### Access via Ingress
+
+If Ingress is configured, access the frontend at:
+```
+http://<ingress-host>/
+```
+
+## Project Structure
+
+```
+frontend/
+├── app/
+│   ├── dashboard/      # Dashboard page
+│   ├── login/          # Login page
+│   ├── users/          # Users management page
+│   ├── products/       # Products management page
+│   ├── layout.tsx      # Root layout
+│   └── page.tsx        # Home page (redirects)
+├── components/
+│   └── Navbar.tsx      # Navigation component
+├── lib/
+│   └── api.ts          # API client
+└── k8s/
+    ├── configmap.yaml  # Environment configuration
+    ├── deployment.yaml # Kubernetes deployment
+    └── service.yaml    # Kubernetes service
+```
+
+## Technologies
+
+- **Next.js 16**: React framework
+- **TypeScript**: Type safety
+- **Tailwind CSS**: Styling
+- **Axios**: HTTP client
