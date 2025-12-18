@@ -1,28 +1,34 @@
 import axios from 'axios';
 
 // Get API base URL
-// - If NEXT_PUBLIC_API_URL is empty string (from ConfigMap), use same origin + /api (works with Ingress)
-// - If NEXT_PUBLIC_API_URL is set, use that value
-// - Otherwise, default to http://localhost:3000 for local development
+// Next.js replaces NEXT_PUBLIC_* env vars at build time
+// Strategy: Always use /api prefix when accessing via Ingress (http://localhost without port)
 const getApiBaseUrl = () => {
-  const envUrl = process.env.NEXT_PUBLIC_API_URL;
-  
-  // Empty string from ConfigMap means use same origin + /api (for Kubernetes/Ingress)
-  if (envUrl === '') {
-    const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    return origin ? `${origin}/api` : '/api';
+  // In browser context - check the actual origin
+  if (typeof window !== 'undefined') {
+    const origin = window.location.origin;
+    const envUrl = process.env.NEXT_PUBLIC_API_URL;
+    
+    // If accessing via localhost without port (Ingress), always use /api prefix
+    if (origin === 'http://localhost' || origin === 'https://localhost') {
+      return `${origin}/api`;
+    }
+    
+    // If env var is explicitly set and not empty, use it
+    if (envUrl && envUrl.trim() !== '') {
+      return envUrl;
+    }
+    
+    // Default: use same origin + /api
+    return `${origin}/api`;
   }
   
-  // If env var is set, use it
-  if (envUrl) {
+  // Server-side rendering: default to /api (relative path works with Ingress)
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && envUrl.trim() !== '') {
     return envUrl;
   }
-  
-  // Default: same origin + /api in browser, or localhost:3000 for SSR/local dev
-  if (typeof window !== 'undefined') {
-    return `${window.location.origin}/api`;
-  }
-  return 'http://localhost:3000';
+  return '/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();
