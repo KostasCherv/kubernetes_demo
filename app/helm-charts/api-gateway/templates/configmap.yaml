@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: api-gateway-config
+  namespace: {{ .Values.namespace | default "k8s-microservices" }}
+  labels:
+    app.kubernetes.io/name: api-gateway
+    app.kubernetes.io/managed-by: Helm
+data:
+  AUTH_SERVICE_HOST: {{ .Values.config.authServiceHost | quote }}
+  USER_SERVICE_HOST: {{ .Values.config.userServiceHost | quote }}
+  PRODUCT_SERVICE_HOST: {{ .Values.config.productServiceHost | quote }}
+

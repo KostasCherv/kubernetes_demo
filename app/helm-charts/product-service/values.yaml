@@ -1,0 +1,49 @@
+replicaCount: 2
+
+image:
+  repository: product-service
+  tag: latest
+  pullPolicy: Never
+
+serviceAccount:
+  create: true
+  name: product-service-sa
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "128m"
+  limits:
+    memory: "128Mi"
+    cpu: "128m"
+
+config:
+  databaseHost: "postgres"
+  databasePort: "5432"
+  databaseName: "microservices_db"
+
+databaseSecret:
+  name: postgres-secret
+  userKey: POSTGRES_USER
+  passwordKey: POSTGRES_PASSWORD
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
+healthProbes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 5
+

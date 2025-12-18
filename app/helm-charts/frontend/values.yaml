@@ -1,0 +1,39 @@
+replicaCount: 2
+
+image:
+  repository: frontend
+  tag: latest
+  pullPolicy: Never
+
+serviceAccount:
+  create: true
+  name: frontend-sa
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "250m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+config:
+  apiUrl: ""
+
+autoscaling:
+  enabled: false
+
+healthProbes:
+  liveness:
+    path: /
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    path: /
+    initialDelaySeconds: 10
+    periodSeconds: 5
+

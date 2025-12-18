@@ -1,0 +1,44 @@
+replicaCount: 2
+
+image:
+  repository: api-gateway
+  tag: latest
+  pullPolicy: Never
+
+serviceAccount:
+  create: true
+  name: api-gateway-sa
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "128m"
+  limits:
+    memory: "128Mi"
+    cpu: "128m"
+
+config:
+  authServiceHost: "http://auth-service:3000"
+  userServiceHost: "http://user-service:3000"
+  productServiceHost: "http://product-service:3000"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 6
+  targetCPUUtilizationPercentage: 70
+
+healthProbes:
+  liveness:
+    path: /health
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readiness:
+    path: /health
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
