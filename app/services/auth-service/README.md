@@ -249,6 +249,47 @@ Database credentials are injected from the `postgres-secret` Secret via environm
 - **ConfigMap**: Contains database connection and JWT configuration
 - **Secret Reference**: Database credentials from `postgres-secret`
 - **Health Probes**: Liveness and readiness probes on `/health` endpoint (includes database connectivity check)
+- **HorizontalPodAutoscaler (HPA)**: Automatically scales pods based on CPU utilization
+
+### Horizontal Pod Autoscaler (HPA)
+
+The auth service includes an HPA that automatically scales the number of pods based on CPU utilization.
+
+**Configuration:**
+- **Min Replicas**: 2
+- **Max Replicas**: 5
+- **Target CPU**: 70% utilization
+- **Scale Down**: 50% reduction per minute (5 min stabilization)
+- **Scale Up**: 100% increase or +2 pods per 30 seconds (no stabilization)
+
+**Deploy HPA:**
+```bash
+kubectl apply -f k8s/hpa.yaml
+```
+
+**Monitor HPA:**
+```bash
+# Check HPA status
+kubectl get hpa auth-service-hpa -n k8s-microservices
+
+# Watch HPA in action
+kubectl get hpa auth-service-hpa -n k8s-microservices -w
+
+# Describe HPA
+kubectl describe hpa auth-service-hpa -n k8s-microservices
+```
+
+**How It Works:**
+1. HPA monitors CPU utilization of auth-service pods
+2. When average CPU > 70%, it scales up
+3. When average CPU < 70%, it scales down (after 5 min stabilization)
+4. Scaling respects min (2) and max (5) replica limits
+
+**Test Scaling:**
+```bash
+# Generate load to trigger scaling
+kubectl run -it --rm load-generator --image=busybox --restart=Never -- /bin/sh -c "while true; do wget -q -O- http://auth-service:3000/health; done"
+```
 
 ## How Database Integration Works
 
