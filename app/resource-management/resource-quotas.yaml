@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: k8s-microservices-quota
+  namespace: k8s-microservices
+  labels:
+    app.kubernetes.io/component: resource-management
+spec:
+  hard:
+    # CPU limits
+    requests.cpu: "4"          # Total CPU requests: 4 cores
+    limits.cpu: "6"            # Total CPU limits: 6 cores
+    
+    # Memory limits
+    requests.memory: 4Gi       # Total memory requests: 4GB
+    limits.memory: 6Gi         # Total memory limits: 6GB
+    
+    # Pod limits
+    pods: "30"                 # Maximum 30 pods in namespace
+    
+    # Persistent volume claims
+    persistentvolumeclaims: "5"
+    
+    # Storage limits
+    requests.storage: 10Gi     # Total storage requests: 10GB
+
