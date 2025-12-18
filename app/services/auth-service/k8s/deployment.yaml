@@ -13,6 +13,7 @@ spec:
       labels:
         app.kubernetes.io/name: auth-service
     spec:
+      serviceAccountName: auth-service-sa
       containers:
       - name: auth-service
         image: auth-service:latest

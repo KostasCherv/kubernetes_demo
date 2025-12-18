@@ -13,6 +13,7 @@ spec:
       labels:
         app.kubernetes.io/name: api-gateway
     spec:
+      serviceAccountName: api-gateway-sa
       containers:
       - name: api-gateway
         image: api-gateway:latest

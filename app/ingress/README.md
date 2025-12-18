@@ -43,3 +43,4 @@ kubectl describe ingress -n k8s-microservices
 - Both ingress resources use the `nginx` ingress class
 - The API Gateway ingress uses path rewriting to remove the `/api` prefix before forwarding to the service
 
+
