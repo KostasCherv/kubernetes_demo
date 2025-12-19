@@ -1,3 +1,6 @@
+// Initialize OpenTelemetry FIRST, before any other imports
+require('./telemetry')
+
 const express = require('express')
 const { Pool } = require('pg')
 const jwt = require('jsonwebtoken')

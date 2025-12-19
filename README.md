@@ -39,6 +39,10 @@ graph TB
 - ✅ **HPA** - Horizontal Pod Autoscaler for CPU-based scaling
 - ✅ **Helm Charts** - Package management for all services
 
+### Observability
+- ✅ **OpenTelemetry** - Distributed tracing across all services
+- ✅ **Jaeger** - Trace visualization and service dependency mapping
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -66,6 +70,7 @@ graph TB
 
 - **Frontend**: http://localhost/
 - **API Gateway**: http://localhost/api/health
+- **Jaeger UI** (Tracing): http://localhost/jaeger
 - **Default Login**: `testuser` / `testpass123`
 
 ## 📋 Useful Commands
@@ -125,6 +130,11 @@ helm list -n k8s-microservices
 
 # View events
 kubectl get events -n k8s-microservices --sort-by='.lastTimestamp'
+
+# Access Jaeger UI (tracing)
+# Open: http://localhost/jaeger
+# Or port forward:
+kubectl port-forward -n k8s-microservices svc/jaeger 16686:16686
 ```
 
 ### Service-Specific Commands
@@ -152,6 +162,7 @@ kubernetes_demo/
 │   ├── network-policies/  # Network security policies
 │   ├── resource-management/ # ResourceQuotas and LimitRanges
 │   ├── jobs/              # Jobs and CronJobs
+│   ├── telemetry/         # OpenTelemetry & Jaeger configuration
 │   └── helm-charts/       # Helm charts for all services
 └── scripts/               # Deployment and management scripts
 ```
@@ -189,7 +200,8 @@ This project demonstrates:
 5. **Automation** - Jobs and CronJobs for operational tasks
 6. **Scaling** - HPA for automatic scaling based on CPU
 7. **Package Management** - Helm charts for easy deployment
-8. **Infrastructure as Code** - All resources defined in YAML
+8. **Observability** - OpenTelemetry distributed tracing with Jaeger for request tracking
+9. **Infrastructure as Code** - All resources defined in YAML
 
 ## 🛠️ Development
 
@@ -220,6 +232,7 @@ npm start
 - [Network Policies](./app/network-policies/README.md) - Network security
 - [Helm Charts](./app/helm-charts/README.md) - Package management
 - [Jobs & CronJobs](./app/jobs/README.md) - Automated tasks
+- [Telemetry & Tracing](./app/telemetry/README.md) - OpenTelemetry and Jaeger setup
 
 ## 🧪 Testing
 

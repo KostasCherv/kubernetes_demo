@@ -94,6 +94,12 @@ kubectl apply -f "$APP_DIR/resource-management/"
 echo "  → Deploying CronJobs..."
 kubectl apply -f "$APP_DIR/jobs/cronjobs/"
 
+# Telemetry (Jaeger)
+echo "  → Deploying Jaeger (Telemetry)..."
+kubectl apply -f "$APP_DIR/telemetry/jaeger-service.yaml"
+kubectl apply -f "$APP_DIR/telemetry/jaeger-deployment.yaml"
+kubectl apply -f "$APP_DIR/telemetry/jaeger-ingress.yaml"
+
 echo -e "${GREEN}✅ Infrastructure deployed${NC}"
 echo ""
 
@@ -181,4 +187,5 @@ echo ""
 echo "🌐 Access points:"
 echo "  Frontend: http://localhost/"
 echo "  API Gateway: http://localhost/api/health"
+echo "  Jaeger UI: http://localhost/jaeger"
 

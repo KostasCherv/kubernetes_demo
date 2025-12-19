@@ -7,4 +7,6 @@ data:
   DATABASE_HOST: "postgres"
   DATABASE_PORT: "5432"
   DATABASE_NAME: "microservices_db"
+  SERVICE_NAME: "user-service"
+  JAEGER_ENDPOINT: "http://jaeger:14268/api/traces"
 

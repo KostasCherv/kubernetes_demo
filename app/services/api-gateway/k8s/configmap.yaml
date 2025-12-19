@@ -7,3 +7,5 @@ data:
   AUTH_SERVICE_HOST: "http://auth-service:3000"
   USER_SERVICE_HOST: "http://user-service:3000"
   PRODUCT_SERVICE_HOST: "http://product-service:3000"
+  SERVICE_NAME: "api-gateway"
+  JAEGER_ENDPOINT: "http://jaeger:14268/api/traces"

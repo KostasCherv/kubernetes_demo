@@ -1,3 +1,6 @@
+// Initialize OpenTelemetry FIRST, before any other imports
+require('./telemetry')
+
 const express = require('express')
 const cors = require('cors')
 const app = express()

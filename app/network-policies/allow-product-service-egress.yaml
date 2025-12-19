@@ -20,6 +20,16 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
+  # Allow access to Jaeger for telemetry
+  - to:
+    - podSelector:
+        matchLabels:
+          app: jaeger
+    ports:
+    - protocol: TCP
+      port: 14268
+    - protocol: TCP
+      port: 14250
   # Allow DNS resolution
   - to:
     - namespaceSelector: {}
